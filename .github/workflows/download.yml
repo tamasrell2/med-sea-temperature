@@ -68,7 +68,7 @@ jobs:
           # Átmeneti Copernicus-hibák (pl. "Could not connect to authentication
           # system") miatt újrapróbálkozunk, mielőtt feladnánk.
           n=0
-          max=5
+          max=3
           until [ "$n" -ge "$max" ]; do
             if copernicusmarine subset \
                 --dataset-id cmems_mod_med_phy-tem_anfc_4.2km_P1D-m \
@@ -88,8 +88,8 @@ jobs:
             fi
             n=$((n + 1))
             if [ "$n" -lt "$max" ]; then
-              echo "Sikertelen kísérlet ($n/$max), várok 60 mp-et és újrapróbálom..."
-              sleep 60
+              echo "Sikertelen kísérlet ($n/$max), várok 300 mp-et és újrapróbálom..."
+              sleep 300
             fi
           done
           if [ ! -f "data/${OUT}" ]; then
