@@ -45,7 +45,7 @@ mesh = da.plot.pcolormesh(
     cbar_kwargs={
         "label": "°C",
         "shrink": 0.35,   # rövid skála
-        "aspect": 45,     # vékony skála
+        "aspect": 50,     # vékony skála
         "pad": 0.01,      # közel a térképhez
     },
 )
@@ -59,7 +59,7 @@ ax.set_xlabel("")
 ax.set_ylabel("")
 
 # a térkép töltse ki a képet, minimális margóval
-fig.subplots_adjust(left=0.01, right=0.99, top=0.99, bottom=0.01)
+fig.subplots_adjust(left=0, right=0.99, top=0.99, bottom=0.)
 
 # dpi: a ~4.2 km-es rács kb. 1300 cella széles; 16" * 220 dpi ≈ 3500 px,
 # azaz ~2.7× túlmintázás — éles cellaélek, de nincs fölösleges fájlméret
