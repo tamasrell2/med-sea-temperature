@@ -2,7 +2,9 @@
 
 Ez a repo minden nap automatikusan letölti a Földközi-tenger felszíni
 hőmérséklet (`thetao`) napi átlagát a Copernicus Marine szolgáltatásból,
-és a `data/` mappába commitolja `med_sst_ÉÉÉÉ-HH-NN.nc` néven.
+és a `data/` mappába commitolja `med_sst_ÉÉÉÉ-HH-NN.nc` néven. Ezután a
+nyers adatból egy színes térkép-PNG is készül a `maps/` mappába
+(`med_sst_ÉÉÉÉ-HH-NN.png`).
 
 A futtatás **GitHub Actions**-ön történik (nem a saját gépeden), naponta egyszer.
 
