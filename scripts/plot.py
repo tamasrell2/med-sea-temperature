@@ -16,7 +16,7 @@ import xarray as xr
 date = sys.argv[1]
 nc_path = f"data/med_sst_{date}.nc"
 out_dir = "maps"
-out_path = f"{out_dir}/med_sst_{date}.png"
+out_path = f"{out_dir}/med_temp_{date}.png"
 os.makedirs(out_dir, exist_ok=True)
 
 ds = xr.open_dataset(nc_path)
