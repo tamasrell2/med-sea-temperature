@@ -40,10 +40,10 @@ Ezután semmi teendő – a workflow magától fut naponta.
 
 ## Ütemezés
 
-Naponta **14:00 UTC**-kor fut.
+Naponta **13:00 UTC**-kor fut.
 
 > ⚠️ **Nyári/téli időszámítás:** a GitHub cron mindig UTC-ben jár, nincs
-> időzóna-támogatás. 14:00 UTC = **15:00 CET** (télen) és **16:00 CEST**
+> időzóna-támogatás. 13:00 UTC = **14:00 CET** (télen) és **15:00 CEST**
 > (nyáron). Ha pontosan 15:00 helyi időt akarsz egész évben, az nem
 > oldható meg egyetlen cron-nal; lásd lent.
 
