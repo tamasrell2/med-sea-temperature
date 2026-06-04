@@ -1,0 +1,91 @@
+name: Download Med Sea temperature
+
+on:
+  schedule:
+    # GitHub a cron-t UTC-ben futtatja (nincs időzóna-támogatás).
+    # 14:00 UTC = 15:00 CET (télen) / 16:00 CEST (nyáron).
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Letöltendő nap (YYYY-MM-DD). Üresen hagyva a mai (UTC) nap."
+        required: false
+        default: ""
+
+permissions:
+  contents: write   # kell, hogy a futtató vissza tudjon commitolni a repóba
+
+concurrency:
+  group: download
+  cancel-in-progress: false
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python beállítása
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: copernicusmarine telepítése
+        run: pip install "copernicusmarine>=2,<3"
+
+      - name: Dátum meghatározása
+        id: d
+        env:
+          INPUT_DATE: ${{ github.event.inputs.date }}
+        run: |
+          set -euo pipefail
+          if [ -n "$INPUT_DATE" ]; then
+            # csak szigorú YYYY-MM-DD formátumot fogadunk el (injection ellen)
+            if ! printf '%s' "$INPUT_DATE" | grep -Eq '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+              echo "Hibás dátumformátum: '$INPUT_DATE' (várt: YYYY-MM-DD)" >&2
+              exit 1
+            fi
+            DATE="$INPUT_DATE"
+          else
+            DATE="$(date -u +%Y-%m-%d)"
+          fi
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "Letöltendő nap: $DATE"
+
+      - name: Letöltés
+        env:
+          COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.CM_USER }}
+          COPERNICUSMARINE_SERVICE_PASSWORD: ${{ secrets.CM_PASS }}
+        run: |
+          set -euo pipefail
+          DATE="${{ steps.d.outputs.date }}"
+          mkdir -p data
+          OUT="med_sst_${DATE}.nc"
+          # ha újra futna ugyanarra a napra, ne akadjon el a felülírás kérdésén
+          rm -f "data/${OUT}"
+          copernicusmarine subset \
+            --dataset-id cmems_mod_med_phy-tem_anfc_4.2km_P1D-m \
+            --variable thetao \
+            --start-datetime "${DATE}T00:00:00" \
+            --end-datetime   "${DATE}T00:00:00" \
+            --minimum-longitude -17.29166603088379 \
+            --maximum-longitude 36.29166793823242 \
+            --minimum-latitude 30.1875 \
+            --maximum-latitude 45.97916793823242 \
+            --minimum-depth 1.0182366371154785 \
+            --maximum-depth 1.0182366371154785 \
+            -o data \
+            -f "${OUT}"
+
+      - name: Commit és push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "Nincs új adat, nincs mit commitolni."
+          else
+            git commit -m "Med SST adat: ${{ steps.d.outputs.date }}"
+            git push
+          fi
