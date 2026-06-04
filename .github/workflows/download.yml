@@ -3,8 +3,8 @@ name: Download Med Sea temperature
 on:
   schedule:
     # GitHub a cron-t UTC-ben futtatja (nincs időzóna-támogatás).
-    # 14:00 UTC = 15:00 CET (télen) / 16:00 CEST (nyáron).
-    - cron: "0 14 * * *"
+    # 13:00 UTC = 14:00 CET (télen) / 15:00 CEST (nyáron).
+    - cron: "0 13 * * *"
   workflow_dispatch:
     inputs:
       date:
