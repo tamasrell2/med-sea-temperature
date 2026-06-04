@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import xarray as xr
 
 date = sys.argv[1]
-nc_path = f"data/med_sst_{date}.nc"
+nc_path = f"data/med_temp_{date}.nc"
 out_dir = "maps"
 out_path = f"{out_dir}/med_temp_{date}.png"
 os.makedirs(out_dir, exist_ok=True)
