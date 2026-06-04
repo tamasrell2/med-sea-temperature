@@ -39,8 +39,8 @@ mesh = da.plot.pcolormesh(
     y=lat,
     transform=ccrs.PlateCarree(),
     cmap="RdYlBu_r",
-    vmin=15,
-    vmax=30,
+    vmin=18,
+    vmax=28,
     add_colorbar=True,
     cbar_kwargs={
         "label": "°C",
