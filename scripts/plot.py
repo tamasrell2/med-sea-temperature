@@ -26,7 +26,7 @@ da = ds["thetao"].squeeze()  # az 1 méretű idő/mélység dimenziók eldobása
 lon = "longitude" if "longitude" in da.coords else "lon"
 lat = "latitude" if "latitude" in da.coords else "lat"
 
-fig = plt.figure(figsize=(12, 5))
+fig = plt.figure(figsize=(15, 6.5))
 ax = plt.axes(projection=ccrs.PlateCarree())
 ax.set_extent([-17.3, 36.3, 30.1, 46.0], crs=ccrs.PlateCarree())
 
@@ -36,6 +36,8 @@ mesh = da.plot.pcolormesh(
     y=lat,
     transform=ccrs.PlateCarree(),
     cmap="RdYlBu_r",
+    vmin=15,
+    vmax=30,
     add_colorbar=True,
     cbar_kwargs={"label": "Tengervíz-hőmérséklet (°C)", "shrink": 0.8},
 )
@@ -48,5 +50,5 @@ gl.right_labels = False
 
 ax.set_title(f"Földközi-tenger – felszíni hőmérséklet ({date})")
 
-fig.savefig(out_path, dpi=120, bbox_inches="tight")
+fig.savefig(out_path, dpi=250, bbox_inches="tight")
 print(f"Kész: {out_path}")
