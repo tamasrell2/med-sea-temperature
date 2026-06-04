@@ -64,19 +64,38 @@ jobs:
           OUT="med_temp_${DATE}.nc"
           # ha újra futna ugyanarra a napra, ne akadjon el a felülírás kérdésén
           rm -f "data/${OUT}"
-          copernicusmarine subset \
-            --dataset-id cmems_mod_med_phy-tem_anfc_4.2km_P1D-m \
-            --variable thetao \
-            --start-datetime "${DATE}T00:00:00" \
-            --end-datetime   "${DATE}T00:00:00" \
-            --minimum-longitude -17.29166603088379 \
-            --maximum-longitude 36.29166793823242 \
-            --minimum-latitude 30.1875 \
-            --maximum-latitude 45.97916793823242 \
-            --minimum-depth 1.0182366371154785 \
-            --maximum-depth 1.0182366371154785 \
-            -o data \
-            -f "${OUT}"
+
+          # Átmeneti Copernicus-hibák (pl. "Could not connect to authentication
+          # system") miatt újrapróbálkozunk, mielőtt feladnánk.
+          n=0
+          max=5
+          until [ "$n" -ge "$max" ]; do
+            if copernicusmarine subset \
+                --dataset-id cmems_mod_med_phy-tem_anfc_4.2km_P1D-m \
+                --variable thetao \
+                --start-datetime "${DATE}T00:00:00" \
+                --end-datetime   "${DATE}T00:00:00" \
+                --minimum-longitude -17.29166603088379 \
+                --maximum-longitude 36.29166793823242 \
+                --minimum-latitude 30.1875 \
+                --maximum-latitude 45.97916793823242 \
+                --minimum-depth 1.0182366371154785 \
+                --maximum-depth 1.0182366371154785 \
+                -o data \
+                -f "${OUT}"; then
+              echo "Letöltés sikeres."
+              break
+            fi
+            n=$((n + 1))
+            if [ "$n" -lt "$max" ]; then
+              echo "Sikertelen kísérlet ($n/$max), várok 60 mp-et és újrapróbálom..."
+              sleep 60
+            fi
+          done
+          if [ ! -f "data/${OUT}" ]; then
+            echo "Nem sikerült letölteni $max próbálkozás után." >&2
+            exit 1
+          fi
 
       - name: Térkép rajzolása
         env:
