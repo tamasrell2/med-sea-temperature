@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           DATE="${{ steps.d.outputs.date }}"
           mkdir -p data
-          OUT="med_sst_${DATE}.nc"
+          OUT="med_temp_${DATE}.nc"
           # ha újra futna ugyanarra a napra, ne akadjon el a felülírás kérdésén
           rm -f "data/${OUT}"
           copernicusmarine subset \
