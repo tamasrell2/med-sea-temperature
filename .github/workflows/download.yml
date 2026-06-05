@@ -53,6 +53,19 @@ jobs:
           echo "date=$DATE" >> "$GITHUB_OUTPUT"
           echo "Letöltendő nap: $DATE"
 
+      - name: Auth-szerver kapcsolat-teszt (diagnosztika)
+        run: |
+          set -uo pipefail
+          URL="https://auth.marine.copernicus.eu/realms/MIS/protocol/openid-connect/token"
+          echo "Próbálom elérni az új Copernicus auth végpontot a futtatóból..."
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 15 --max-time 25 "$URL" || echo "TIMEOUT")
+          echo "Eredmény: HTTP $CODE"
+          if [ "$CODE" = "TIMEOUT" ] || [ "$CODE" = "000" ]; then
+            echo "::warning::A GitHub-futtató NEM éri el az auth szervert (időtúllépés)."
+          else
+            echo "A futtató ELÉRI az auth szervert (a $CODE válasz normális GET-re; a lényeg, hogy gyorsan jött válasz)."
+          fi
+
       - name: Letöltés
         env:
           COPERNICUSMARINE_SERVICE_USERNAME: ${{ secrets.CM_USER }}
