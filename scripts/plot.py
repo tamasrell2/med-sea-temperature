@@ -40,7 +40,9 @@ mesh = da.plot.pcolormesh(
     transform=ccrs.PlateCarree(),
     cmap="RdYlBu_r",
     vmin=18,
-    vmax=28,
+    vmax=30,
+    shading="gouraud",       # cellák közti interpoláció -> lágy, "viewer-szerű" kép
+    infer_intervals=False,   # a gouraud cella-középpontokat vár, ne cellahatárokat
     add_colorbar=True,
     cbar_kwargs={
         "label": "°C",
